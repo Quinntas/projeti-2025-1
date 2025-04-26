@@ -8,7 +8,7 @@ interface Props {
 
 export const MessageList = ({messages}: Props) => {
     return (
-        <ul className="grid auto-rows-min pt-6 pb-28 gap-4 flex-1 mx-auto w-[800px]">
+        <ul className="grid auto-rows-min pb-28 flex-1 mx-auto w-[800px]">
             <AnimatePresence mode="wait">
                 {messages.map((m) => (
                     <Message key={m.id} message={m}/>

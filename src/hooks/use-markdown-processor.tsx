@@ -1,7 +1,7 @@
 import {Root} from "hast";
 import mermaid from "mermaid";
 import Link from "next/link";
-import {Children, createElement, Fragment, isValidElement, useEffect, useMemo, useRef, useState,} from "react";
+import React, {Children, createElement, Fragment, isValidElement, useEffect, useMemo, useRef, useState,} from "react";
 import flattenChildren from "react-keyed-flatten-children";
 import rehypeHighlight from "rehype-highlight";
 import rehypeReact from "rehype-react";
@@ -15,15 +15,19 @@ import {HtmlGenerator, parse} from "latex.js";
 import {Button} from "@/components/ui/button";
 import {ChartPie, Check, Copy, Radical, RefreshCcw} from "lucide-react";
 import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import dedent from "dedent";
+import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
+import {toast} from "sonner";
+import {prismTheme} from "@/lib/prism-theme";
 
 export const ANCHOR_CLASS_NAME =
-    "font-semibold underline text-emerald-700 underline-offset-[2px] decoration-1 hover:text-emerald-800 transition-colors";
+    "font-semibold underline underline-offset-[2px] decoration-1 hover:text-zinc-300 transition-colors";
 
 const rehypeListItemParagraphToDiv: Plugin<[], Root> = () => {
-    return (tree) => {
+    return (tree: any) => {
         visit(tree, "element", (element) => {
             if (element.tagName === "li") {
-                element.children = element.children.map((child) => {
+                element.children = element.children.map((child: any) => {
                     if (child.type === "element" && child.tagName === "p") {
                         child.tagName = "div";
                     }
@@ -200,6 +204,21 @@ export const useMarkdownProcessor = (content: string) => {
     }, [content]);
 };
 
+const extractText = (node: React.ReactNode): string => {
+    if (node === null || node === undefined) return "";
+    if (typeof node === "string" || typeof node === "number") {
+        return node.toString();
+    }
+    if (Array.isArray(node)) {
+        return node.map(child => extractText(child)).join("");
+    }
+    if (React.isValidElement(node)) {
+        return extractText(node.props.children);
+    }
+    return "";
+};
+
+
 const CodeBlock = ({children, className}: JSX.IntrinsicElements["code"]) => {
     const [copied, setCopied] = useState(false);
     const [showMermaidPreview, setShowMermaidPreview] = useState(false);
@@ -214,19 +233,24 @@ const CodeBlock = ({children, className}: JSX.IntrinsicElements["code"]) => {
     }, [copied]);
 
     if (className) {
-        const isMermaid = className.includes("language-mermaid");
-        const isLatex = className.includes("language-latex");
+        const language: 'mermaid' | 'latex' | (string & {}) = className.split("-")[1];
 
-        const content = isMermaid ?
-            <Mermaid content={children?.toString() ?? ""}/> : isLatex ?
-                <Latex content={children?.toString() ?? ""}/> : children;
+        const CONTENT: Record<string, JSX.Element> = {
+            mermaid: <Mermaid content={children?.toString() || ""}/>,
+            latex: <Latex content={children?.toString() ?? ""}/>
+        }
 
         return (
             <>
                 <code ref={ref} className={`${className} flex-grow flex-shrink my-auto`}>
-                    {content}
+                    {
+                        CONTENT[language] ??
+                        <SyntaxHighlighter style={prismTheme} language={language}>
+                            {extractText(children)}
+                        </SyntaxHighlighter>
+                    }
                 </code>
-                <div className="flex flex-col gap-1 flex-grow-0 flex-shrink-0">
+                <div className="flex absolute top-[10px] right-[10px] flex-col gap-1 flex-grow-0 flex-shrink-0">
                     <Button
                         size={"icon"}
                         variant={"outline"}
@@ -236,6 +260,9 @@ const CodeBlock = ({children, className}: JSX.IntrinsicElements["code"]) => {
                             if (ref.current) {
                                 navigator.clipboard.writeText(ref.current.innerText ?? "");
                                 setCopied(true);
+                                toast.success("Copied to clipboard");
+                            } else {
+                                toast.error("Failed to copy to clipboard");
                             }
                         }}
                     >
@@ -245,7 +272,7 @@ const CodeBlock = ({children, className}: JSX.IntrinsicElements["code"]) => {
                             <Copy className="w-4 h-4"/>
                         )}
                     </Button>
-                    {isMermaid ? (
+                    {language === 'mermaid' ? (
                         <>
                             <Button
                                 size={"icon"}
@@ -273,7 +300,7 @@ const CodeBlock = ({children, className}: JSX.IntrinsicElements["code"]) => {
                             </Dialog>
                         </>
                     ) : null}
-                    {isLatex ? (
+                    {language === 'latex' ? (
                         <>
                             <Button
                                 size={"icon"}
@@ -317,11 +344,12 @@ const Latex = ({content}: { content: string }) => {
 
     useEffect(() => {
         try {
-            const generator = new HtmlGenerator({hyphenate: false});
+            const generator = new HtmlGenerator({
+                hyphenate: false
+            });
             const fragment = parse(content, {generator: generator}).domFragment();
             setDiagram(fragment.firstElementChild.outerHTML);
         } catch (error) {
-            console.error(error);
             setDiagram(false);
         }
     }, [content]);
@@ -335,8 +363,8 @@ const Latex = ({content}: { content: string }) => {
         );
     } else if (diagram === false) {
         return (
-            <p className="font-sans text-sm ">
-                Unable to render this diagram.
+            <p className="font-sans text-sm">
+                {content}
             </p>
         );
     } else {
@@ -349,10 +377,8 @@ const Mermaid = ({content}: { content: string }) => {
 
     useEffect(() => {
         const render = async () => {
-            // Generate a random ID for mermaid to use.
             const id = `mermaid-svg-${Math.round(Math.random() * 10000000)}`;
 
-            // Confirm the diagram is valid before rendering.
             if (await mermaid.parse(content, {suppressErrors: true})) {
                 const {svg} = await mermaid.render(id, content);
                 setDiagram(svg);
@@ -389,7 +415,7 @@ const Mermaid = ({content}: { content: string }) => {
     }
 };
 
-export const MARKDOWN_TEST_MESSAGE = `
+export const MARKDOWN_TEST_MESSAGE = dedent`
 # Heading level 1
 
 This is the first paragraph.
@@ -416,6 +442,13 @@ This is a code block:
 const Message = () => {
   return <div>hi</div>;
 };
+\`\`\`
+
+\`\`\`python
+def add(a, b):
+    return a + b
+
+print(add(1, 2)) # 3
 \`\`\`
 
 ##### Heading level 5
@@ -487,6 +520,9 @@ gitGraph
 This is a LaTeX equation:
 
 \`\`\`latex
-\\[F(x) = \\int_{a}^{b} f(x) \\, dx\\]
+\[ L[f(t)] = \int_0^{\infty} e^{-st} f(t) dt \]
 \`\`\`
-`;
+
+\`\`\`latex
+\[F(x) = \int_{a}^{b} f(x) \, dx\]
+\`\`\``;

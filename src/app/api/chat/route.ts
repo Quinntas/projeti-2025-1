@@ -1,65 +1,93 @@
-import { OpenAIStream, StreamingTextResponse } from "ai";
-import { NextResponse } from "next/server";
-import {
-  ChatCompletionRequestMessageRoleEnum,
-  Configuration,
-  OpenAIApi,
-} from "openai-edge";
+import {OpenAIStream, StreamingTextResponse} from "ai";
+import {NextResponse} from "next/server";
+import {ChatCompletionRequestMessageRoleEnum, Configuration, OpenAIApi,} from "openai-edge";
+import dedent from "dedent";
 
 export const runtime = "edge";
 
-const SYSTEM_PROMPT = `You are a general answering assistant that can comply with any request. 
+const SYSTEM_PROMPT = dedent`You are a general answering assistant that can comply with any request. 
 
 You always answer the with markdown formatting. You will be penalized if you do not answer with markdown when it would be possible.
 The markdown formatting you support: headings, bold, italic, links, tables, lists, code blocks, and blockquotes.
 You do not support images and never include images. You will be penalized if you render images.
 
+### Code Block 
+\`\`\`javascript
+function example() {
+    const greeting = "Hello, World!";
+    console.log(greeting);
+}
+\`\`\`
+
+### Mermaid
 You also support Mermaid diagrams. You will be penalized if you do not render Mermaid diagrams when it would be possible.
 The Mermaid diagrams you support: sequenceDiagram, flowChart, classDiagram, stateDiagram, erDiagram, gantt, journey, gitGraph, pie.
+For example:
+\`\`\`mermaid
+gitGraph
+    commit
+    commit
+    branch develop
+    checkout develop
+    commit
+    commit
+    checkout main
+    merge develop
+    commit
+    commit
+\`\`\`
 
+### Latex
 You also support LaTeX equation syntax only in markdown code blocks with the "latex" language.
 You must always render all equations in this format (LaTeX code blocks) using only valid LaTeX syntax.
 For example:
 \`\`\`latex
-\\[ F = \\frac{{G \\cdot m_1 \\cdot m_2}}{{r^2}} \\]
+\[ F = \frac{{G \cdot m_1 \cdot m_2}}{{r^2}} \]
+\`\`\`
+
 \`\`\`latex
-`;
+\[ L[f(t)] = \int_0^{\infty} e^{-st} f(t) dt \]
+\`\`\`
+
+\`\`\`latex
+\[F(x) = \int_{a}^{b} f(x) \, dx\]
+\`\`\``;
 
 export async function POST(req: Request) {
-  const { messages, token, model = "gpt-3.5-turbo" } = await req.json();
+    const {messages, token, model = "gpt-3.5-turbo"} = await req.json();
 
-  const configuration = new Configuration({ apiKey: token });
-  const openai = new OpenAIApi(configuration);
+    const configuration = new Configuration({apiKey: token});
+    const openai = new OpenAIApi(configuration);
 
-  try {
-    const response = await openai.createChatCompletion({
-      model,
-      stream: true,
-      messages: [
-        {
-          role: ChatCompletionRequestMessageRoleEnum.System,
-          content: SYSTEM_PROMPT,
-        },
-        ...messages,
-      ],
-    });
+    try {
+        const response = await openai.createChatCompletion({
+            model,
+            stream: true,
+            messages: [
+                {
+                    role: ChatCompletionRequestMessageRoleEnum.System,
+                    content: SYSTEM_PROMPT,
+                },
+                ...messages,
+            ],
+        });
 
-    if (response.status >= 300) {
-      const body = await response.json();
-      return NextResponse.json(
-        { error: `OpenAI error encountered: ${body?.error?.message}.` },
-        { status: response.status }
-      );
+        if (response.status >= 300) {
+            const body = await response.json();
+            return NextResponse.json(
+                {error: `OpenAI error encountered: ${body?.error?.message}.`},
+                {status: response.status}
+            );
+        }
+
+        const stream = OpenAIStream(response);
+        return new StreamingTextResponse(stream);
+    } catch (e) {
+        console.error(e);
+
+        return NextResponse.json(
+            {error: "An unexpected error occurred. Please try again later."},
+            {status: 500}
+        );
     }
-
-    const stream = OpenAIStream(response);
-    return new StreamingTextResponse(stream);
-  } catch (e) {
-    console.error(e);
-
-    return NextResponse.json(
-      { error: "An unexpected error occurred. Please try again later." },
-      { status: 500 }
-    );
-  }
 }

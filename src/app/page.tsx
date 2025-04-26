@@ -24,9 +24,10 @@ import {toast} from "sonner";
 import {EmptyMessage} from "@/components/empty-message";
 
 const SUPPORTED_MODELS = [
-    "gpt-3.5-turbo",
-    "gpt-3.5-turbo-16k",
-    "gpt-4",
+    "o4-mini",
+    "o3",
+    "o3-mini",
+    "gpt-4o"
 ] as const;
 
 type SupportedModels = typeof SUPPORTED_MODELS[number];
@@ -77,6 +78,7 @@ export default function Chat() {
         }
 
         if (input.trim() || uploadedFiles.length > 0) {
+            // @ts-expect-error asd
             aiHandleSubmit(e);
             setUploadedFiles([]);
             setIsSearchActive(false);

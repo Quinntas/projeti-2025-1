@@ -8,7 +8,7 @@ interface Props {
 export const UserMessage = ({children}: Props) => {
     return (
         <motion.div
-            className="w-full flex items-center justify-end"
+            className="w-full flex items-center justify-end my-8"
             initial={{opacity: 0, y: 20}}
             animate={{opacity: 1, y: 0}}
             exit={{opacity: 0, scale: 0.95}}
