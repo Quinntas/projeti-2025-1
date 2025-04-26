@@ -1,35 +1,40 @@
-import type {Metadata} from "next";
-import {Geist, Geist_Mono} from "next/font/google";
+import {Analytics} from "@vercel/analytics/react";
+import classNames from "classnames";
+import {Inter, JetBrains_Mono} from "next/font/google";
 import "./globals.css";
 import "katex/dist/katex.min.css";
 import {TooltipProvider} from "@/components/ui/tooltip";
-import {ThemeProvider} from "@/components/theme-provider";
 import {Toaster} from "@/components/ui/sonner";
+import {ThemeProvider} from "@/components/theme-provider";
 
-const geistSans = Geist({
-    variable: "--font-geist-sans",
+const sans = Inter({
     subsets: ["latin"],
+    variable: "--font-sans",
+});
+const monospace = JetBrains_Mono({
+    subsets: ["latin"],
+    variable: "--font-mono",
 });
 
-const geistMono = Geist_Mono({
-    variable: "--font-geist-mono",
-    subsets: ["latin"],
-});
-
-export const metadata: Metadata = {
-    title: "Projeti",
-    description: "Projeti",
+export const metadata = {
+    title: "LLM Markdown",
+    description:
+        "App demo for rendering rich-text (markdown) from a Large Language Model.",
 };
 
 export default function RootLayout({
                                        children,
-                                   }: Readonly<{
+                                   }: {
     children: React.ReactNode;
-}>) {
+}) {
     return (
         <html lang="en" suppressHydrationWarning>
         <body
-            className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+            className={classNames(
+                sans.className,
+                sans.variable,
+                monospace.variable
+            )}
         >
         <ThemeProvider
             attribute="class"
@@ -42,6 +47,7 @@ export default function RootLayout({
             </TooltipProvider>
             <Toaster/>
         </ThemeProvider>
+        <Analytics/>
         </body>
         </html>
     );
