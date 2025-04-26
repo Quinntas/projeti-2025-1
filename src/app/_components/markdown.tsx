@@ -1,14 +1,14 @@
-import {memo} from 'react';
+import {memo, useMemo} from 'react';
 import remarkGfm from 'remark-gfm';
 import remarkMath from 'remark-math';
 import rehypeKatex from 'rehype-katex';
 import supersub from 'remark-supersub';
 import ReactMarkdown from 'react-markdown';
 import rehypeHighlight from 'rehype-highlight';
-import type {PluggableList} from 'unified';
-import {ArtifactProvider} from "@/app/_components/artifact-provider";
-import {CodeBlockProvider} from "@/app/_components/codeblock-provider";
+import type {Pluggable} from 'unified';
 import CodeBlock from "@/app/_components/code-block";
+import {preprocessLaTeX} from "@/utils/latex";
+import remarkDirective from 'remark-directive';
 
 export const langSubset = [
     'python',
@@ -59,7 +59,7 @@ export const codeNoExecution: React.ElementType = memo(({className, children}: T
     const match = /language-(\w+)/.exec(className ?? '');
     const lang = match && match[1];
 
-    if (lang === 'math') {
+    if (lang === 'math' || lang === 'latex') {
         return children;
     } else if (typeof children === 'string' && children.split('\n').length === 1) {
         return (
@@ -97,49 +97,61 @@ export const p: React.ElementType = memo(({children}: TParagraphProps) => {
     return <p className="mb-2 whitespace-pre-wrap">{children}</p>;
 });
 
-const MarkdownLite = memo(
-    ({content = ''}: { content?: string; codeExecution?: boolean }) => {
-        const rehypePlugins: PluggableList = [
-            [rehypeKatex, {output: 'mathml'}],
-            [
-                rehypeHighlight,
-                {
-                    detect: true,
-                    ignoreMissing: true,
-                    subset: langSubset,
-                },
+
+const Markdown = memo(
+    ({content = ''}: { content?: string }) => {
+        const isInitializing = content === '';
+
+        const currentContent = useMemo(() => {
+            if (isInitializing) return '';
+            return preprocessLaTeX(content);
+        }, [content, isInitializing]);
+
+        const rehypePlugins = useMemo(
+            () => [
+                [rehypeKatex, {output: 'mathml'}],
+                [
+                    rehypeHighlight,
+                    {
+                        detect: true,
+                        ignoreMissing: true,
+                        subset: langSubset,
+                    },
+                ],
             ],
-        ];
+            [],
+        );
+
+        const remarkPlugins: Pluggable[] = useMemo(
+            () => [
+                supersub,
+                remarkGfm,
+                remarkDirective,
+                [remarkMath, {singleDollarTextMath: true}],
+            ],
+            [],
+        );
 
         return (
-            <ArtifactProvider>
-                <CodeBlockProvider>
-                    <ReactMarkdown
-                        remarkPlugins={[
-                            /** @ts-ignore */
-                            supersub,
-                            remarkGfm,
-                            [remarkMath, {singleDollarTextMath: true}],
-                        ]}
-                        /** @ts-ignore */
-                        rehypePlugins={rehypePlugins}
-                        // linkTarget="_new"
-                        components={
-                            {
-                                code: codeNoExecution,
-                                a,
-                                p,
-                            } as {
-                                [nodeType: string]: React.ElementType;
-                            }
-                        }
-                    >
-                        {content}
-                    </ReactMarkdown>
-                </CodeBlockProvider>
-            </ArtifactProvider>
+            <ReactMarkdown
+                /** @ts-ignore */
+                remarkPlugins={remarkPlugins}
+                /** @ts-ignore */
+                rehypePlugins={rehypePlugins}
+                components={
+                    {
+                        code: codeNoExecution,
+                        a,
+                        p,
+                    } as {
+                        [nodeType: string]: React.ElementType;
+                    }
+                }
+            >
+                {currentContent}
+            </ReactMarkdown>
         );
     },
 );
 
-export default MarkdownLite;
+export default Markdown;

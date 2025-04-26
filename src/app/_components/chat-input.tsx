@@ -1,12 +1,14 @@
 "use client"
 
 import {useRef, useState} from "react"
-import {ArrowUp, ChevronDown, Paperclip, Search} from "lucide-react"
+import {ArrowUp, ChevronDown, Key, Paperclip, Search} from "lucide-react"
 import {Button} from "@/components/ui/button"
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,} from "@/components/ui/dropdown-menu"
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,} from "@/components/ui/tooltip"
 import {Toggle} from "@/components/ui/toggle"
 import {cn} from "@/lib/utils"
+import {ApiKeyDialog} from "@/app/_components/api-key-dialog"
+import {toast} from "sonner"
 
 const models = [
     "gemini-1.5-pro",
@@ -16,6 +18,8 @@ const models = [
 
 interface ChatInputProps {
     handleSubmit: (text: string, files: File[], useSearch: boolean) => void
+    apiKey: string
+    onApiKeySave: (apiKey: string) => void
 }
 
 export function ChatInput(props: ChatInputProps) {
@@ -23,6 +27,7 @@ export function ChatInput(props: ChatInputProps) {
     const [uploadedFiles, setUploadedFiles] = useState<File[]>([])
     const [isSearchActive, setIsSearchActive] = useState(false)
     const [selectedModel, setSelectedModel] = useState(models[0])
+    const [apiKeyDialogOpen, setApiKeyDialogOpen] = useState(false)
     const fileInputRef = useRef<HTMLInputElement>(null)
 
     const handleFileUpload = () => {
@@ -41,6 +46,8 @@ export function ChatInput(props: ChatInputProps) {
     }
 
     const handleSubmit = () => {
+        if (!props.apiKey) return toast.error("Please configure your API key")
+        
         if (textInput.trim() || uploadedFiles.length > 0) {
             props.handleSubmit(textInput, uploadedFiles, isSearchActive)
             setTextInput("")
@@ -102,10 +109,27 @@ export function ChatInput(props: ChatInputProps) {
                                 </Tooltip>
                             </TooltipProvider>
 
+                            <TooltipProvider>
+                                <Tooltip>
+                                    <TooltipTrigger asChild>
+                                        <Button
+                                            variant="ghost"
+                                            size="icon"
+                                            onClick={() => setApiKeyDialogOpen(true)}
+                                        >
+                                            <Key className="h-5 w-5"/>
+                                        </Button>
+                                    </TooltipTrigger>
+                                    <TooltipContent>
+                                        <p>Configure API Key</p>
+                                    </TooltipContent>
+                                </Tooltip>
+                            </TooltipProvider>
+
                             <Toggle
                                 pressed={isSearchActive}
                                 onPressedChange={toggleSearch}
-                                className="rounded-l-full rounded-r-none py-1.5 px-3 flex items-center gap-1.5 text-sm h-auto"
+                                className="rounded-full py-1.5 px-3 flex items-center gap-1.5 text-sm h-auto"
                             >
                                 <Search className="h-4 w-4"/>
                                 <span>Search</span>
@@ -150,6 +174,13 @@ export function ChatInput(props: ChatInputProps) {
                     </div>
                 </div>
             </div>
+
+            <ApiKeyDialog
+                open={apiKeyDialogOpen}
+                onOpenChange={setApiKeyDialogOpen}
+                apiKey={props.apiKey}
+                onApiKeySave={props.onApiKeySave}
+            />
         </div>
     )
 }

@@ -1,8 +1,10 @@
 import type {Metadata} from "next";
 import {Geist, Geist_Mono} from "next/font/google";
 import "./globals.css";
+import "katex/dist/katex.min.css";
 import {TooltipProvider} from "@/components/ui/tooltip";
 import {ThemeProvider} from "@/components/theme-provider";
+import {Toaster} from "@/components/ui/sonner";
 
 const geistSans = Geist({
     variable: "--font-geist-sans",
@@ -38,6 +40,7 @@ export default function RootLayout({
             <TooltipProvider delayDuration={0}>
                 {children}
             </TooltipProvider>
+            <Toaster/>
         </ThemeProvider>
         </body>
         </html>

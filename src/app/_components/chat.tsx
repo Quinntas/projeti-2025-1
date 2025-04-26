@@ -3,14 +3,25 @@
 import {useChat} from "@/app/_components/hooks/use-chat";
 import {ChatInput} from "@/app/_components/chat-input";
 import {ChatMessage} from "./chat-message";
+import {useEffect, useState} from "react";
 
-interface ChatProps {
-    apiKey: string
-}
 
-export function Chat(props: ChatProps) {
+export function Chat() {
+    const [apiKey, setApiKey] = useState<string>(() => {
+        if (typeof window !== "undefined") {
+            return localStorage.getItem("apiKey") || ""
+        }
+        return ""
+    })
+
+    useEffect(() => {
+        if (apiKey) {
+            localStorage.setItem("apiKey", apiKey)
+        }
+    }, [apiKey])
+
     const {messages, sendMessage} = useChat({
-        apiKey: props.apiKey
+        apiKey
     })
 
     function handleSubmit(text: string, files: File[], useSearch: boolean) {
@@ -25,7 +36,11 @@ export function Chat(props: ChatProps) {
             </div>
 
             <div className="fixed bottom-5 left-1/2 transform -translate-x-1/2">
-                <ChatInput handleSubmit={handleSubmit}/>
+                <ChatInput
+                    handleSubmit={handleSubmit}
+                    apiKey={apiKey}
+                    onApiKeySave={setApiKey}
+                />
             </div>
 
         </div>

@@ -4,7 +4,8 @@ import {useEffect, useState} from "react"
 import {GenerateContentResponse} from "@google/genai"
 import {Message} from "@/lib/modules/message"
 import 'katex/dist/katex.min.css'
-import MarkdownLite from "@/app/_components/markdown";
+import Markdown from "@/app/_components/markdown";
+import {AnimatePresence, motion} from "framer-motion"
 
 interface ChatMessageProps {
     message: Message
@@ -32,15 +33,28 @@ export function ChatMessage({message}: ChatMessageProps) {
         }
     }, [message])
 
-    return <>
-        {message.role === "user" ? (
-            <div className="w-full flex items-center justify-end ">
-                <div className="rounded-lg bg-muted p-3 shadow-sm border">
-                    <p className="whitespace-pre-wrap leading-6">{content}</p>
-                </div>
-            </div>
-        ) : (
-            <MarkdownLite content={content}/>
-        )}
-    </>
+    return (
+        <AnimatePresence mode="wait">
+            {message.role === "user" ? (
+                <motion.div
+                    className="w-full flex items-center justify-end"
+                    initial={{opacity: 0, y: 20}}
+                    animate={{opacity: 1, y: 0}}
+                    exit={{opacity: 0, scale: 0.95}}
+                    transition={{duration: 0.3}}
+                >
+                    <motion.div
+                        className="rounded-lg bg-muted p-3 shadow-sm border"
+                        initial={{scale: 0.95}}
+                        animate={{scale: 1}}
+                        transition={{type: "spring", stiffness: 300, damping: 30}}
+                    >
+                        <p className="whitespace-pre-wrap leading-6">{content}</p>
+                    </motion.div>
+                </motion.div>
+            ) : (
+                <Markdown content={content}/>
+            )}
+        </AnimatePresence>
+    )
 }
