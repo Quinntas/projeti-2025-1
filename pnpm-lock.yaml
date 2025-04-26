@@ -98,18 +98,6 @@ importers:
       '@themosaad/tailwindcss-capsize':
         specifier: ^1.0.0
         version: 1.0.0
-      '@types/hast':
-        specifier: ^3.0.4
-        version: 3.0.4
-      '@types/node':
-        specifier: 20.3.3
-        version: 20.3.3
-      '@types/react':
-        specifier: 18.2.14
-        version: 18.2.14
-      '@types/react-dom':
-        specifier: 18.2.6
-        version: 18.2.6
       '@vercel/analytics':
         specifier: ^1.0.1
         version: 1.5.0(next@15.3.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0))(react@19.1.0)(svelte@4.2.19)(vue@3.5.13(typescript@5.1.6))
@@ -155,9 +143,6 @@ importers:
       input-otp:
         specifier: ^1.4.2
         version: 1.4.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      katex:
-        specifier: ^0.16.22
-        version: 0.16.22
       latex.js:
         specifier: ^0.12.6
         version: 0.12.6
@@ -249,6 +234,18 @@ importers:
         specifier: ^3.24.3
         version: 3.24.3
     devDependencies:
+      '@types/hast':
+        specifier: ^3.0.4
+        version: 3.0.4
+      '@types/node':
+        specifier: 20.3.3
+        version: 20.3.3
+      '@types/react':
+        specifier: 18.2.14
+        version: 18.2.14
+      '@types/react-dom':
+        specifier: 18.2.6
+        version: 18.2.6
       '@types/react-syntax-highlighter':
         specifier: ^15.5.13
         version: 15.5.13
