@@ -104,7 +104,7 @@ export default function Chat() {
                         <MessageList isLoading={isLoading} messages={messages} isThinking={isThinking}/> :
                         <EmptyMessage/>}
 
-                    <div className="w-[810px] mx-auto fixed bottom-5 left-1/2 transform -translate-x-1/2">
+                    <div className="w-[95%] sm:w-[810px] mx-auto fixed bottom-5 left-1/2 transform -translate-x-1/2">
                         {error ? (
                             <div className="p-3 rounded-lg bg-rose-100 border-2 border-rose-200 mb-3">
                                 <p className="font-sans text-sm text-red text-rose-800">

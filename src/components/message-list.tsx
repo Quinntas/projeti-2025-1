@@ -9,7 +9,7 @@ interface Props {
 
 export const MessageList = ({messages, isThinking, isLoading}: Props) => {
     return (
-        <ul className="grid auto-rows-min pb-28 flex-1 mx-auto w-[800px]">
+        <ul className="grid auto-rows-min pb-28 flex-1 mx-auto w-[90%] sm:w-[800px]">
             {messages.map((m) => (
                 <Message key={m.id} message={m} isLoading={isLoading}/>
             ))}
