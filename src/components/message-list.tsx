@@ -1,19 +1,18 @@
-import {AnimatePresence} from "framer-motion";
 import Message from "./message";
 import {Message as MessageType} from "ai/react";
 
 interface Props {
     messages: MessageType[];
+    isThinking: boolean;
 }
 
-export const MessageList = ({messages}: Props) => {
+export const MessageList = ({messages, isThinking}: Props) => {
     return (
         <ul className="grid auto-rows-min pb-28 flex-1 mx-auto w-[800px]">
-            <AnimatePresence mode="wait">
-                {messages.map((m) => (
-                    <Message key={m.id} message={m}/>
-                ))}
-            </AnimatePresence>
+            {messages.map((m) => (
+                <Message key={m.id} message={m}/>
+            ))}
+            {isThinking && <span className="animate-pulse">Thinking...</span>}
         </ul>
     );
 };

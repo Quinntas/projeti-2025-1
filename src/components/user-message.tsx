@@ -1,4 +1,4 @@
-import {motion} from "framer-motion"
+import {AnimatePresence, motion} from "framer-motion"
 
 
 interface Props {
@@ -6,7 +6,7 @@ interface Props {
 }
 
 export const UserMessage = ({children}: Props) => {
-    return (
+    return <AnimatePresence mode="wait">
         <motion.div
             className="w-full flex items-center justify-end my-8"
             initial={{opacity: 0, y: 20}}
@@ -23,5 +23,5 @@ export const UserMessage = ({children}: Props) => {
                 <p className="whitespace-pre-wrap leading-6">{children}</p>
             </motion.div>
         </motion.div>
-    );
+    </AnimatePresence>
 };

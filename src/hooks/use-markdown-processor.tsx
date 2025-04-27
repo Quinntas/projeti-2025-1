@@ -253,7 +253,7 @@ const CodeBlock = ({children, className}: JSX.IntrinsicElements["code"]) => {
                 <div className="flex absolute top-[10px] right-[10px] flex-col gap-1 flex-grow-0 flex-shrink-0">
                     <Button
                         size={"icon"}
-                        variant={"outline"}
+                        variant={"ghost"}
                         aria-label="copy code to clipboard"
                         title="Copy code to clipboard"
                         onClick={() => {
@@ -276,7 +276,7 @@ const CodeBlock = ({children, className}: JSX.IntrinsicElements["code"]) => {
                         <>
                             <Button
                                 size={"icon"}
-                                variant={"outline"}
+                                variant={"ghost"}
                                 aria-label="Open Mermaid preview"
                                 title="Open Mermaid preview"
                                 onClick={() => {
@@ -292,7 +292,7 @@ const CodeBlock = ({children, className}: JSX.IntrinsicElements["code"]) => {
                                 <DialogContent>
                                     <DialogHeader>
                                         <DialogTitle>
-                                            Diagram
+                                            Mermaid
                                         </DialogTitle>
                                     </DialogHeader>
                                     {children}
@@ -304,7 +304,7 @@ const CodeBlock = ({children, className}: JSX.IntrinsicElements["code"]) => {
                         <>
                             <Button
                                 size={"icon"}
-                                variant={"outline"}
+                                variant={"ghost"}
                                 aria-label="Open Latex preview"
                                 onClick={() => {
                                     setShowLatexPreview(true);
@@ -398,17 +398,19 @@ const Mermaid = ({content}: { content: string }) => {
         );
     } else if (diagram === false) {
         return (
-            <p className="font-sans text-sm ">
-                Unable to render this diagram. Try copying it into the{" "}
-                <Link
-                    href="https://mermaid.live/edit"
-                    className={ANCHOR_CLASS_NAME}
-                    target="_blank"
-                >
-                    Mermaid Live Editor
-                </Link>
-                .
-            </p>
+            <div className="font-sans flex items-center justify-center text-sm h-[60px]">
+                <p>
+                    Unable to render this diagram. Try copying it into the{" "}
+                    <Link
+                        href="https://mermaid.live/edit"
+                        className={ANCHOR_CLASS_NAME}
+                        target="_blank"
+                    >
+                        Mermaid Live Editor
+                    </Link>
+                    .
+                </p>
+            </div>
         );
     } else {
         return <div dangerouslySetInnerHTML={{__html: diagram ?? ""}}/>;

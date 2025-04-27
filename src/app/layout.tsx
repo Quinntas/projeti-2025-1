@@ -17,9 +17,9 @@ const monospace = JetBrains_Mono({
 });
 
 export const metadata = {
-    title: "LLM Markdown",
+    title: "Chatbot",
     description:
-        "App demo for rendering rich-text (markdown) from a Large Language Model.",
+        "Chatbot is a simple chatbot built with Next.js and Tailwind CSS. It supports Markdown, Mermaid diagrams, and LaTeX equations.",
 };
 
 export default function RootLayout({

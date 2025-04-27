@@ -49,9 +49,11 @@ export default function Chat() {
     const [isSearchActive, setIsSearchActive] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const {messages, input, handleInputChange, handleSubmit: aiHandleSubmit, error} = useChat({
+    const {messages, input, isLoading, handleInputChange, handleSubmit: aiHandleSubmit, error} = useChat({
         body: {token, model},
     });
+
+    const isThinking = Math.abs(messages.length % 2) == 1 && isLoading;
 
     const handleFileUpload = () => {
         fileInputRef.current?.click();
@@ -98,7 +100,7 @@ export default function Chat() {
                 <div
                     className="mx-auto w-full px-2 lg:px-8 pb-8 flex flex-col justify-between stretch gap-8 flex-1">
 
-                    {messages.length > 0 ? <MessageList messages={messages}/> : <EmptyMessage/>}
+                    {messages.length > 0 ? <MessageList messages={messages} isThinking={isThinking}/> : <EmptyMessage/>}
 
                     <div className="w-[810px] mx-auto fixed bottom-5 left-1/2 transform -translate-x-1/2">
                         {error ? (
