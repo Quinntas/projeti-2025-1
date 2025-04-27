@@ -1,7 +1,7 @@
 "use client";
 
 import {useRef, useState} from "react";
-import {ArrowUp, ChevronDown, Key, Paperclip, Search} from "lucide-react";
+import {ArrowUp, Ban, ChevronDown, Key, Paperclip, Search} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,} from "@/components/ui/dropdown-menu";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,} from "@/components/ui/tooltip";
@@ -9,7 +9,6 @@ import {Toggle} from "@/components/ui/toggle";
 import {cn} from "@/lib/utils";
 import {MessageList} from "@/components/message-list";
 import {useLocalStorage} from "@/hooks/use-local-storage";
-import {useChat} from "ai/react";
 import {
     Dialog,
     DialogClose,
@@ -22,6 +21,7 @@ import {
 import {Input} from "@/components/ui/input";
 import {toast} from "sonner";
 import {EmptyMessage} from "@/components/empty-message";
+import {useChat} from "@ai-sdk/react";
 
 const SUPPORTED_MODELS = [
     "o4-mini",
@@ -32,28 +32,21 @@ const SUPPORTED_MODELS = [
 
 type SupportedModels = typeof SUPPORTED_MODELS[number];
 
-const parseError = (error: Error) => {
-    try {
-        return JSON.parse(error.message).error;
-    } catch (e) {
-        console.error(e);
-        return error.message;
-    }
-};
-
 export default function Chat() {
     const [apiKeyDialogOpen, setApiKeyDialogOpen] = useState(false);
     const [token, setToken] = useLocalStorage<string | null>("ai-token", null);
     const [model, setModel] = useLocalStorage<SupportedModels>("ai-model", SUPPORTED_MODELS[0]);
-    const [uploadedFiles, setUploadedFiles] = useState<File[]>([]);
+    const [uploadedFiles, setUploadedFiles] = useState<FileList | undefined>(undefined);
     const [isSearchActive, setIsSearchActive] = useState(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
 
-    const {messages, input, isLoading, handleInputChange, handleSubmit: aiHandleSubmit, error} = useChat({
-        body: {token, model},
+    const {messages, input, stop, status, handleInputChange, handleSubmit: aiHandleSubmit, error} = useChat({
+        body: {token, model, isSearchActive},
     });
 
+    const isLoading = status === "streaming" || status === 'submitted';
     const isThinking = Math.abs(messages.length % 2) == 1 && isLoading;
+    const isReady = status === "ready" && input.trim();
 
     const handleFileUpload = () => {
         fileInputRef.current?.click();
@@ -61,9 +54,8 @@ export default function Chat() {
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
-        if (files && files.length > 0) {
-            setUploadedFiles(Array.from(files));
-        }
+        if (files && files.length > 0)
+            setUploadedFiles(files);
     };
 
     const toggleSearch = () => {
@@ -79,16 +71,17 @@ export default function Chat() {
             return;
         }
 
-        if (input.trim() || uploadedFiles.length > 0) {
-            // @ts-expect-error asd
-            aiHandleSubmit(e);
-            setUploadedFiles([]);
+        if (input.trim() || !uploadedFiles) {
+            aiHandleSubmit(e, {
+                experimental_attachments: uploadedFiles
+            });
+            setUploadedFiles(undefined);
             setIsSearchActive(false);
         }
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        if (e.key === "Enter" && !e.shiftKey) {
+        if (e.key === "Enter" && !e.shiftKey && isReady) {
             e.preventDefault();
             handleSubmit(e as unknown as React.FormEvent);
         }
@@ -108,7 +101,7 @@ export default function Chat() {
                         {error ? (
                             <div className="p-3 rounded-lg bg-rose-100 border-2 border-rose-200 mb-3">
                                 <p className="font-sans text-sm text-red text-rose-800">
-                                    {parseError(error)}
+                                    {error.message}
                                 </p>
                             </div>
                         ) : null}
@@ -208,15 +201,23 @@ export default function Chat() {
                                             </DropdownMenuContent>
                                         </DropdownMenu>
 
-                                        <Button
+                                        {isLoading ? <Button
+                                            size="icon"
+                                            disabled={!isLoading}
+                                            onClick={stop}
+                                            variant={!isLoading ? "ghost" : "default"}
+                                            className="rounded-full"
+                                        >
+                                            <Ban className="h-5 w-5"/>
+                                        </Button> : <Button
                                             size="icon"
                                             type="submit"
-                                            disabled={!input.trim() && uploadedFiles.length === 0}
-                                            variant={!input.trim() && uploadedFiles.length === 0 ? "ghost" : "default"}
+                                            disabled={!isReady}
+                                            variant={!isReady ? "ghost" : "default"}
                                             className="rounded-full"
                                         >
                                             <ArrowUp className="h-5 w-5"/>
-                                        </Button>
+                                        </Button>}
                                     </div>
                                 </div>
                             </form>

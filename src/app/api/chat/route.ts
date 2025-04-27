@@ -1,8 +1,8 @@
-import {OpenAIStream, StreamingTextResponse} from "ai";
-import {NextResponse} from "next/server";
-import {ChatCompletionRequestMessageRoleEnum, Configuration, OpenAIApi,} from "openai-edge";
+import {streamText} from "ai";
+import {createOpenAI} from "@ai-sdk/openai";
 
 export const runtime = "edge";
+export const maxDuration = 30;
 
 const SYSTEM_PROMPT = `You are a general answering assistant that can comply with any request. 
 
@@ -52,43 +52,17 @@ For example:
 \\[F(x) = \\int_{a}^{b} f(x) \\, dx\\]
 \`\`\``;
 
-console.log(SYSTEM_PROMPT)
 
 export async function POST(req: Request) {
-    const {messages, token, model = "gpt-3.5-turbo"} = await req.json();
-
-    const configuration = new Configuration({apiKey: token});
-    const openai = new OpenAIApi(configuration);
-
-    try {
-        const response = await openai.createChatCompletion({
-            model,
-            stream: true,
-            messages: [
-                {
-                    role: ChatCompletionRequestMessageRoleEnum.System,
-                    content: SYSTEM_PROMPT,
-                },
-                ...messages,
-            ],
-        });
-
-        if (response.status >= 300) {
-            const body = await response.json();
-            return NextResponse.json(
-                {error: `OpenAI error encountered: ${body?.error?.message}.`},
-                {status: response.status}
-            );
-        }
-
-        const stream = OpenAIStream(response);
-        return new StreamingTextResponse(stream);
-    } catch (e) {
-        console.error(e);
-
-        return NextResponse.json(
-            {error: "An unexpected error occurred. Please try again later."},
-            {status: 500}
-        );
-    }
+    const {messages, token, model, isSearchActive} = await req.json();
+    const result = streamText({
+        model: createOpenAI({
+            apiKey: token
+        })(model, {
+            reasoningEffort: "medium",
+        }),
+        system: SYSTEM_PROMPT,
+        messages
+    })
+    return result.toDataStreamResponse()
 }

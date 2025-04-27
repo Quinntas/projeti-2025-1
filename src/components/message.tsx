@@ -1,9 +1,9 @@
-import {Message} from "ai/react";
 import {UserMessage} from "./user-message";
 import {AssistantMessage} from "./assistant-message";
+import {UIMessage} from "ai";
 
 interface Props {
-    message: Message;
+    message: UIMessage;
     isLoading: boolean
 }
 

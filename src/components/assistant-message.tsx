@@ -27,9 +27,9 @@ export const AssistantMessage = ({children, isLoading}: Props) => {
     };
 
     return (
-        <div className="grid">
+        <div className="grid my-8">
             {content}
-            {!isLoading && <div className="flex justify-start gap-1 items-center">
+            {!isLoading && <div className="flex justify-start gap-1 -mt-3 items-center">
                 <Button
                     size="icon"
                     variant="ghost"
