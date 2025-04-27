@@ -1,3 +1,5 @@
+"use client";
+
 import {Root} from "hast";
 import mermaid from "mermaid";
 import Link from "next/link";
@@ -444,12 +446,12 @@ This is a complex list:
     - One
     - Two
     - Three
-  
+
 2. **Bold**: Three
     - One
     - Two
     - Three
-  
+
 3. **Bold**: Four
     - One
     - Two
