@@ -3,8 +3,8 @@
 ## To-Do List
 
 - [ ] Authentication (Cookies with JWT)
-- [ ] AI tooling setup
-- [ ] Desmos api integration
+- [X] AI tooling setup
+- [X] Desmos api integration
 - [ ] Geogebra api integration
 - [ ] Symbolab api integration
 

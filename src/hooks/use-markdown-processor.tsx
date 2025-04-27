@@ -18,6 +18,8 @@ import dedent from "dedent";
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 import {toast} from "sonner";
 import {prismTheme} from "@/lib/prism-theme";
+import {useDesmos} from "@/hooks/use-desmos";
+import {v4} from "uuid";
 
 export const ANCHOR_CLASS_NAME =
     "font-semibold underline underline-offset-[2px] decoration-1 hover:text-zinc-300 transition-colors";
@@ -40,7 +42,7 @@ const rehypeListItemParagraphToDiv: Plugin<[], Root> = () => {
 
 export const useMarkdownProcessor = (content: string) => {
     useEffect(() => {
-        mermaid.initialize({startOnLoad: false, theme: "forest"});
+        mermaid.initialize({startOnLoad: false, theme: "dark"});
     }, []);
 
     return useMemo(() => {
@@ -217,6 +219,31 @@ const extractText = (node: React.ReactNode): string => {
     return "";
 };
 
+interface DesmosProps {
+    content: string;
+}
+
+const Desmos = React.memo(function Desmos(props: DesmosProps) {
+    const {scriptLoaded, initCalculator} = useDesmos()
+    const divRef = useRef<HTMLDivElement>(null)
+
+    useEffect(() => {
+        if (scriptLoaded && divRef.current) {
+            const calc = initCalculator(divRef.current, {
+                expressions: true,
+            })
+
+            calc?.setExpression({id: v4(), latex: props.content})
+        }
+    }, [scriptLoaded, initCalculator, props.content])
+
+    return <div className={"w-full h-full overflow-hidden"}>
+        <div
+            ref={divRef}
+            className={"w-[100%] h-[400px]"}
+        />
+    </div>
+})
 
 const CodeBlock = ({children, className}: JSX.IntrinsicElements["code"]) => {
     const [copied, setCopied] = useState(false);
@@ -230,11 +257,12 @@ const CodeBlock = ({children, className}: JSX.IntrinsicElements["code"]) => {
     }, [copied]);
 
     if (className) {
-        const language: 'mermaid' | 'latex' | (string & {}) = className.split("-")[1];
+        const language: 'mermaid' | 'latex' | 'desmos' | (string & {}) = className.split("-")[1];
 
         const CONTENT: Record<string, JSX.Element> = {
             mermaid: <Mermaid content={children?.toString() || ""}/>,
-            latex: <Latex content={children?.toString() ?? ""}/>
+            latex: <Latex content={children?.toString() ?? ""}/>,
+            desmos: <Desmos content={children?.toString() ?? ""}/>,
         }
 
         return (
@@ -474,4 +502,9 @@ This is a LaTeX equation:
 
 \`\`\`latex
 \[F(x) = \int_{a}^{b} f(x) \, dx\]
+\`\`\`
+
+This is a desmos diagram:
+\`\`\`desmos
+y=x^{2}
 \`\`\``;

@@ -19,6 +19,7 @@ function example() {
 }
 \`\`\`
 
+
 ### Mermaid
 You also support Mermaid diagrams. You will be penalized if you do not render Mermaid diagrams when it would be possible.
 The Mermaid diagrams you support: sequenceDiagram, flowChart, classDiagram, stateDiagram, erDiagram, gantt, journey, gitGraph, pie.
@@ -54,7 +55,19 @@ Good example:
 \`\`\`
 
 Bad example:
-Therefore, (x_1 \\cdot x_2 = 7) is correct.`;
+Therefore, (x_1 \\cdot x_2 = 7) is correct.
+
+### Desmos
+You also support Desmos diagrams. You will be penalized if you do not render Desmos diagrams when it would be possible.
+For example:
+\`\`\`desmos
+y=sin(x)
+\`\`\`
+
+\`\`\`desmos
+y=x^{2}
+\`\`\`
+`;
 
 
 export async function POST(req: Request) {
@@ -70,6 +83,8 @@ export async function POST(req: Request) {
         messages,
         toolChoice: 'auto',
         temperature: 0.3,
-        tools: createAISDKTools(calculator),
+        tools: {
+            ...createAISDKTools(calculator)
+        },
     }).toDataStreamResponse()
 }

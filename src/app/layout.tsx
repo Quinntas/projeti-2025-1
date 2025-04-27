@@ -6,6 +6,7 @@ import "katex/dist/katex.min.css";
 import {TooltipProvider} from "@/components/ui/tooltip";
 import {Toaster} from "@/components/ui/sonner";
 import {ThemeProvider} from "@/components/theme-provider";
+import {DesmosProvider} from "@/hooks/use-desmos";
 
 const sans = Inter({
     subsets: ["latin"],
@@ -43,7 +44,9 @@ export default function RootLayout({
             disableTransitionOnChange
         >
             <TooltipProvider delayDuration={0}>
-                {children}
+                <DesmosProvider>
+                    {children}
+                </DesmosProvider>
             </TooltipProvider>
             <Toaster/>
         </ThemeProvider>
