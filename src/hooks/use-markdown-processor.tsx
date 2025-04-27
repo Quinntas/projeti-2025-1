@@ -13,8 +13,7 @@ import {visit} from "unist-util-visit";
 // @ts-expect-error
 import {HtmlGenerator, parse} from "latex.js";
 import {Button} from "@/components/ui/button";
-import {ChartPie, Check, Copy, Radical, RefreshCcw} from "lucide-react";
-import {Dialog, DialogContent, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {Check, Copy, RefreshCcw} from "lucide-react";
 import dedent from "dedent";
 import {Prism as SyntaxHighlighter} from 'react-syntax-highlighter';
 import {toast} from "sonner";
@@ -194,7 +193,7 @@ export const useMarkdownProcessor = (content: string) => {
                         </td>
                     ),
                     blockquote: ({children}: JSX.IntrinsicElements["blockquote"]) => (
-                        <blockquote className="border-l-4  pl-2  italic">
+                        <blockquote className="border-l-4 pl-2 pt-2 italic">
                             {children}
                         </blockquote>
                     ),
@@ -221,8 +220,6 @@ const extractText = (node: React.ReactNode): string => {
 
 const CodeBlock = ({children, className}: JSX.IntrinsicElements["code"]) => {
     const [copied, setCopied] = useState(false);
-    const [showMermaidPreview, setShowMermaidPreview] = useState(false);
-    const [showLatexPreview, setShowLatexPreview] = useState(false);
     const ref = useRef<HTMLElement>(null);
 
     useEffect(() => {
@@ -250,12 +247,13 @@ const CodeBlock = ({children, className}: JSX.IntrinsicElements["code"]) => {
                         </SyntaxHighlighter>
                     }
                 </code>
-                <div className="flex absolute top-[10px] right-[10px] flex-col gap-1 flex-grow-0 flex-shrink-0">
+                <div className="flex absolute top-[10px] group right-[10px] flex-col gap-1 flex-grow-0 flex-shrink-0 ">
                     <Button
                         size={"icon"}
                         variant={"ghost"}
-                        aria-label="copy code to clipboard"
-                        title="Copy code to clipboard"
+                        aria-label="copy to clipboard"
+                        title="Copy to clipboard"
+                        className={"invisible group-hover:visible"}
                         onClick={() => {
                             if (ref.current) {
                                 navigator.clipboard.writeText(ref.current.innerText ?? "");
@@ -272,61 +270,6 @@ const CodeBlock = ({children, className}: JSX.IntrinsicElements["code"]) => {
                             <Copy className="w-4 h-4"/>
                         )}
                     </Button>
-                    {language === 'mermaid' ? (
-                        <>
-                            <Button
-                                size={"icon"}
-                                variant={"ghost"}
-                                aria-label="Open Mermaid preview"
-                                title="Open Mermaid preview"
-                                onClick={() => {
-                                    setShowMermaidPreview(true);
-                                }}
-                            >
-                                <ChartPie className="w-4 h-4"/>
-                            </Button>
-                            <Dialog
-                                open={showMermaidPreview}
-                                onOpenChange={setShowMermaidPreview}
-                            >
-                                <DialogContent>
-                                    <DialogHeader>
-                                        <DialogTitle>
-                                            Mermaid
-                                        </DialogTitle>
-                                    </DialogHeader>
-                                    {children}
-                                </DialogContent>
-                            </Dialog>
-                        </>
-                    ) : null}
-                    {language === 'latex' ? (
-                        <>
-                            <Button
-                                size={"icon"}
-                                variant={"ghost"}
-                                aria-label="Open Latex preview"
-                                onClick={() => {
-                                    setShowLatexPreview(true);
-                                }}
-                            >
-                                <Radical className="w-4 h-4"/>
-                            </Button>
-                            <Dialog
-                                open={showLatexPreview}
-                                onOpenChange={setShowLatexPreview}
-                            >
-                                <DialogContent>
-                                    <DialogHeader>
-                                        <DialogTitle>
-                                            Latex
-                                        </DialogTitle>
-                                    </DialogHeader>
-                                    {children}
-                                </DialogContent>
-                            </Dialog>
-                        </>
-                    ) : null}
                 </div>
             </>
         );

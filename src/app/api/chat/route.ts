@@ -1,7 +1,8 @@
 import {streamText} from "ai";
 import {createOpenAI} from "@ai-sdk/openai";
+import {calculator} from "@agentic/calculator";
+import {createAISDKTools} from "@agentic/ai-sdk";
 
-export const runtime = "edge";
 export const maxDuration = 30;
 
 const SYSTEM_PROMPT = `You are a general answering assistant that can comply with any request. 
@@ -37,9 +38,9 @@ gitGraph
 \`\`\`
 
 ### Latex
-You also support LaTeX equation syntax only in markdown code blocks with the "latex" language.
+You also support LaTeX equation syntax only in markdown code blocks with the "latex" language. Never use inline LaTeX.
 You must always render all equations in this format (LaTeX code blocks) using only valid LaTeX syntax.
-For example:
+Good example:
 \`\`\`latex
 \\[ F = \\frac{{G \\cdot m_1 \\cdot m_2}}{{r^2}} \\]
 \`\`\`
@@ -50,19 +51,25 @@ For example:
 
 \`\`\`latex
 \\[F(x) = \\int_{a}^{b} f(x) \\, dx\\]
-\`\`\``;
+\`\`\`
+
+Bad example:
+Therefore, (x_1 \\cdot x_2 = 7) is correct.`;
 
 
 export async function POST(req: Request) {
     const {messages, token, model, isSearchActive} = await req.json();
-    const result = streamText({
+    return streamText({
         model: createOpenAI({
             apiKey: token
         })(model, {
             reasoningEffort: "medium",
         }),
         system: SYSTEM_PROMPT,
-        messages
-    })
-    return result.toDataStreamResponse()
+        maxSteps: 5,
+        messages,
+        toolChoice: 'auto',
+        temperature: 0.3,
+        tools: createAISDKTools(calculator),
+    }).toDataStreamResponse()
 }

@@ -1,5 +1,6 @@
-import Message from "./message";
 import {UIMessage} from "ai";
+import {UserMessage} from "@/components/user-message";
+import {AssistantMessage} from "@/components/assistant-message";
 
 interface Props {
     messages: UIMessage[];
@@ -9,13 +10,22 @@ interface Props {
 
 export const MessageList = ({messages, isThinking, isLoading}: Props) => {
     return (
-        <ul className="grid auto-rows-min mb-28 mt-8 flex-1 mx-auto w-[90%] sm:w-[800px]">
+        <ul className="grid auto-rows-min mb-[120px] mt-8 flex-1 mx-auto w-[90%] sm:w-[800px]">
             {messages.map((m) => {
                 return <div key={m.id}>
                     {m.parts.map((part, i) => {
                         switch (part.type) {
                             case "text":
-                                return <Message key={`${m.id}-${i}`} message={m} isLoading={isLoading}/>
+                                if (m.role === "user")
+                                    return <UserMessage key={`${m.id}-${i}`}>
+                                        {m.content}
+                                    </UserMessage>;
+                                else if (m.role === "assistant")
+                                    return <AssistantMessage
+                                        key={`${m.id}-${i}`}
+                                        isLoading={isLoading}>
+                                        {m.content}
+                                    </AssistantMessage>
                         }
                     })}
                     <div className={"flex items-center justify-end flex-wrap gap-2 mt-2"}>
@@ -25,7 +35,7 @@ export const MessageList = ({messages, isThinking, isLoading}: Props) => {
                             )
                             .map((attachment, index) => (
                                 <img
-                                    key={`${m.id}-${index}-atach`}
+                                    key={`${m.id}-${index}-attach`}
                                     src={attachment.url}
                                     alt={attachment.name}
                                     className={"w-[150px]"}
@@ -34,7 +44,7 @@ export const MessageList = ({messages, isThinking, isLoading}: Props) => {
                     </div>
                 </div>
             })}
-            {isThinking && <span className="animate-pulse">Thinking...</span>}
+            {isThinking && <span className="animate-pulse pt-2">Thinking...</span>}
         </ul>
     );
 };
