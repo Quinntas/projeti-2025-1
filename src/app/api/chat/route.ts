@@ -41,16 +41,18 @@ You also support LaTeX equation syntax only in markdown code blocks with the "la
 You must always render all equations in this format (LaTeX code blocks) using only valid LaTeX syntax.
 For example:
 \`\`\`latex
-\[ F = \frac{{G \cdot m_1 \cdot m_2}}{{r^2}} \]
+\\[ F = \\frac{{G \\cdot m_1 \\cdot m_2}}{{r^2}} \\]
 \`\`\`
 
 \`\`\`latex
-\[ L[f(t)] = \int_0^{\infty} e^{-st} f(t) dt \]
+\\[ L[f(t)] = \\int_0^{\\infty} e^{-st} f(t) dt \\]
 \`\`\`
 
 \`\`\`latex
-\[F(x) = \int_{a}^{b} f(x) \, dx\]
+\\[F(x) = \\int_{a}^{b} f(x) \\, dx\\]
 \`\`\``;
+
+console.log(SYSTEM_PROMPT)
 
 export async function POST(req: Request) {
     const {messages, token, model = "gpt-3.5-turbo"} = await req.json();

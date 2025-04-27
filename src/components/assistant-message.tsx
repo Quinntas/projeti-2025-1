@@ -6,9 +6,10 @@ import {Check, Copy, ThumbsDown, ThumbsUp} from "lucide-react";
 
 interface Props {
     children: string;
+    isLoading: boolean
 }
 
-export const AssistantMessage = ({children}: Props) => {
+export const AssistantMessage = ({children, isLoading}: Props) => {
     const content = useMarkdownProcessor(children);
     const [copied, setCopied] = useState(false);
 
@@ -28,7 +29,7 @@ export const AssistantMessage = ({children}: Props) => {
     return (
         <div className="grid">
             {content}
-            <div className="flex justify-start gap-1 items-center">
+            {!isLoading && <div className="flex justify-start gap-1 items-center">
                 <Button
                     size="icon"
                     variant="ghost"
@@ -54,7 +55,7 @@ export const AssistantMessage = ({children}: Props) => {
                 >
                     <ThumbsDown className={"w-4 h-4"} fill={like === false ? "white" : ""}/>
                 </Button>
-            </div>
+            </div>}
         </div>
     );
 };

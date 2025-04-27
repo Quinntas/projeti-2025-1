@@ -100,7 +100,9 @@ export default function Chat() {
                 <div
                     className="mx-auto w-full px-2 lg:px-8 pb-8 flex flex-col justify-between stretch gap-8 flex-1">
 
-                    {messages.length > 0 ? <MessageList messages={messages} isThinking={isThinking}/> : <EmptyMessage/>}
+                    {messages.length > 0 ?
+                        <MessageList isLoading={isLoading} messages={messages} isThinking={isThinking}/> :
+                        <EmptyMessage/>}
 
                     <div className="w-[810px] mx-auto fixed bottom-5 left-1/2 transform -translate-x-1/2">
                         {error ? (

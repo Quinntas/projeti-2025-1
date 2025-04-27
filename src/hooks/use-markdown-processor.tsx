@@ -522,6 +522,10 @@ gitGraph
 This is a LaTeX equation:
 
 \`\`\`latex
+\[ F = \frac{{G \cdot m_1 \cdot m_2}}{{r^2}} \]
+\`\`\`
+
+\`\`\`latex
 \[ L[f(t)] = \int_0^{\infty} e^{-st} f(t) dt \]
 \`\`\`
 
