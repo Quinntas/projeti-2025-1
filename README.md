@@ -1,5 +1,13 @@
 # Projeti
 
+## To-Do List
+
+- [ ] Authentication (Cookies with JWT)
+- [ ] AI tooling setup
+- [ ] Desmos api integration
+- [ ] Geogebra api integration
+- [ ] Symbolab api integration
+
 ## Prerequisites
 
 - [Node.js](https://nodejs.org/) v18.x or later
@@ -33,9 +41,3 @@
   ```bash
   pnpm run build
   ```
-
-## Additional Information
-
-- Make sure Node.js and pnpm are installed globally on your system.
-- For details about installing Node.js, visit the [Node.js official website](https://nodejs.org/).
-- For instructions on installing pnpm, check the [pnpm documentation](https://pnpm.io/installation).
