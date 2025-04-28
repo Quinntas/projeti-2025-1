@@ -1,7 +1,7 @@
 "use client";
 
 import {useRef, useState} from "react";
-import {ArrowUp, Ban, ChevronDown, Key, Paperclip, Search} from "lucide-react";
+import {ArrowUp, Ban, ChevronDown, Key, Paperclip, Search, X} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,} from "@/components/ui/dropdown-menu";
 import {Tooltip, TooltipContent, TooltipProvider, TooltipTrigger,} from "@/components/ui/tooltip";
@@ -105,6 +105,38 @@ export default function Chat() {
                                 </p>
                             </div>
                         ) : null}
+
+                        {uploadedFiles &&
+                            <div className={"flex flex-row flex-wrap gap-3 items-end justify-start my-3 mx-4"}>
+                                {Array.from(uploadedFiles).map((file, index) => (
+                                    <div
+                                        key={`file-preview-${index}`}
+                                        className={"relative"}
+                                    >
+                                        <Button
+                                            variant={"destructive"}
+                                            size={"icon"}
+                                            onClick={() => {
+                                                const newFiles = Array.from(uploadedFiles || []).filter((_, i) => i !== index);
+                                                const dt = new DataTransfer();
+                                                newFiles.forEach(file => dt.items.add(file));
+                                                setUploadedFiles(dt.files);
+                                            }}
+                                            className={"rounded-full w-6 h-6 absolute -top-2 -right-2"}
+                                        >
+                                            <X className={"w-4 h-4"}/>
+                                        </Button>
+
+                                        <img
+                                            src={URL.createObjectURL(file)}
+                                            alt={file.name}
+                                            className="w-[150px]"
+                                        />
+                                    </div>
+                                ))}
+                            </div>}
+
+
                         <div className="bg-card rounded-2xl p-3 shadow-lg border">
                             <form onSubmit={handleSubmit} className="flex flex-col gap-3">
                                 <div className="relative w-full">
