@@ -1,6 +1,7 @@
 import {UIMessage} from "ai";
 import {UserMessage} from "@/components/user-message";
 import {AssistantMessage} from "@/components/assistant-message";
+import {LoadingText} from "@/components/loading-text";
 
 interface Props {
     messages: UIMessage[];
@@ -44,7 +45,7 @@ export const MessageList = ({messages, isThinking, isLoading}: Props) => {
                     </div>
                 </div>
             })}
-            {isThinking && <span className="animate-pulse pt-2">Thinking...</span>}
+            {isThinking && <LoadingText text={"Thinking"} className={"justify-start"}/>}
         </ul>
     );
 };

@@ -3,11 +3,11 @@
 ## Todo List
 
 - [ ] Support image/audio generation
-- [ ] Break down [use-markdown-processor](src/hooks/use-markdown-processor.tsx) into smaller pieces
+- [X] Break down [use-markdown-processor](src/hooks/use-markdown-processor.tsx) into smaller pieces
 - [ ] Save chats in localStorage
 - [ ] Step-by-step chat feedback (reasoning, tool calling, status, etc.)
 - [ ] Better [empty-message](src/components/empty-message.tsx) copy
-- [ ] Reduce bundle size
+- [x] Reduce bundle size
 - [ ] Features are not working in prod (bug)
 - [ ] Mobile PWA
 - [ ] Allow for taking pictures

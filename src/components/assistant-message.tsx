@@ -1,8 +1,8 @@
 import React, {useState} from "react";
 import {toast} from "sonner";
-import {useMarkdownProcessor} from "@/hooks/use-markdown-processor";
 import {Button} from "@/components/ui/button";
 import {Check, Copy, ThumbsDown, ThumbsUp} from "lucide-react";
+import {useMarkdownProcessor} from "@/hooks/use-markdown-processor";
 
 interface Props {
     children: string;
@@ -10,9 +10,8 @@ interface Props {
 }
 
 export const AssistantMessage = ({children, isLoading}: Props) => {
-    const content = useMarkdownProcessor(children);
+    const nodes = useMarkdownProcessor(children);
     const [copied, setCopied] = useState(false);
-
     const [like, setLike] = useState<boolean | null>(null);
 
     const handleCopy = async () => {
@@ -28,8 +27,9 @@ export const AssistantMessage = ({children, isLoading}: Props) => {
 
     return (
         <div className="grid my-8">
-            {content}
-            {!isLoading && <div className="flex justify-start gap-1 -mt-3 items-center">
+            {nodes}
+
+            {!isLoading && <div className="flex justify-start gap-1 mt-2 items-center">
                 <Button
                     size="icon"
                     variant="ghost"
