@@ -11,7 +11,7 @@
 - [ ] Features are not working in prod (bug)
 - [ ] Mobile PWA
 - [ ] Allow for taking pictures
-- [ ] File preview in chat
+- [X] File preview in chat
 - [ ] Authentication (Cookies with JWT)
 - [X] AI tooling setup
 - [X] Desmos api integration
