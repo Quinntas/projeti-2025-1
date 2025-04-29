@@ -7,6 +7,7 @@ import {TooltipProvider} from "@/components/ui/tooltip";
 import {Toaster} from "@/components/ui/sonner";
 import {ThemeProvider} from "@/components/theme-provider";
 import {DesmosProvider} from "@/hooks/use-desmos";
+import {LocalChatProvider} from "@/hooks/use-local-chat";
 
 const sans = Inter({
     subsets: ["latin"],
@@ -45,7 +46,9 @@ export default function RootLayout({
         >
             <TooltipProvider delayDuration={0}>
                 <DesmosProvider>
-                    {children}
+                    <LocalChatProvider>
+                        {children}
+                    </LocalChatProvider>
                 </DesmosProvider>
             </TooltipProvider>
             <Toaster/>

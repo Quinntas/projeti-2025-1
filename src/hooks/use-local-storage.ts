@@ -8,8 +8,10 @@ export const useLocalStorage = <T>(
 
     useEffect(() => {
         const item = window.localStorage.getItem(key);
-        if (item) {
+        if (item !== null) {
             setStoredValue(JSON.parse(item));
+        } else {
+            setValue(initialValue);
         }
     }, [key]);
 

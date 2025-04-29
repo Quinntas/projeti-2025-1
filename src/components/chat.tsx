@@ -1,6 +1,6 @@
 "use client";
 
-import {useRef, useState} from "react";
+import {useEffect, useRef, useState} from "react";
 import {ArrowUp, Ban, ChevronDown, Key, Paperclip, Search, X} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger,} from "@/components/ui/dropdown-menu";
@@ -22,6 +22,8 @@ import {Input} from "@/components/ui/input";
 import {toast} from "sonner";
 import {EmptyMessage} from "@/components/empty-message";
 import {useChat} from "@ai-sdk/react";
+import {useLocalChat} from "@/hooks/use-local-chat";
+import {Message} from "ai";
 
 const SUPPORTED_MODELS = [
     "o4-mini",
@@ -32,7 +34,12 @@ const SUPPORTED_MODELS = [
 
 type SupportedModels = typeof SUPPORTED_MODELS[number];
 
-export default function Chat() {
+interface ChatProps {
+    id: string
+}
+
+export function Chat(props: ChatProps) {
+    const {messages: initialMessages, addMessage, replaceMessages} = useLocalChat(props.id)
     const [apiKeyDialogOpen, setApiKeyDialogOpen] = useState(false);
     const [token, setToken] = useLocalStorage<string | null>("ai-token", null);
     const [model, setModel] = useLocalStorage<SupportedModels>("ai-model", SUPPORTED_MODELS[0]);
@@ -42,7 +49,18 @@ export default function Chat() {
 
     const {messages, input, stop, status, handleInputChange, handleSubmit: aiHandleSubmit, error} = useChat({
         body: {token, model, isSearchActive},
+        id: props.id,
+        initialMessages,
+        onFinish: (m) => {
+            const msgs = messages as Message[]
+            msgs[msgs.length - 1] = m
+            replaceMessages(props.id, msgs)
+        }
     });
+
+    useEffect(() => {
+        replaceMessages(props.id, messages)
+    }, [messages.length]);
 
     const isLoading = status === "streaming" || status === 'submitted';
     const isThinking = Math.abs(messages.length % 2) == 1 && isLoading;
@@ -54,8 +72,7 @@ export default function Chat() {
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const files = e.target.files;
-        if (files && files.length > 0)
-            setUploadedFiles(files);
+        if (files && files.length > 0) setUploadedFiles(files);
     };
 
     const toggleSearch = () => {
@@ -89,7 +106,7 @@ export default function Chat() {
 
     return (
         <>
-            <div className="flex flex-col-reverse h-screen overflow-y-scroll">
+            <div className="flex flex-col-reverse h-screen overflow-y-scroll w-full">
                 <div
                     className="mx-auto w-full px-2 lg:px-8 pb-8 flex flex-col justify-between stretch gap-8 flex-1">
 
