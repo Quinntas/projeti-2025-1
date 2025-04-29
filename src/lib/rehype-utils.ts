@@ -1,8 +1,7 @@
 import {Plugin} from "unified";
-import {Root} from "hast";
 import {visit} from "unist-util-visit";
 
-export const rehypeListItemParagraphToDiv: Plugin<[], Root> = () => {
+export const rehypeListItemParagraphToDiv: Plugin<[], unknown> = () => {
     return (tree: any) => {
         visit(tree, "element", (element) => {
             if (element.tagName === "li")

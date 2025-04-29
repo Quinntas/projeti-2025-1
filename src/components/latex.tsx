@@ -16,7 +16,7 @@ export const Latex = ({content}: { content: string }) => {
         } catch (error) {
             setDiagram(false);
         }
-    }, [content]);
+    }, []);
 
     if (diagram === true) {
         return (

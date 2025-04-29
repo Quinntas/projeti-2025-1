@@ -26,9 +26,6 @@ importers:
       '@hookform/resolvers':
         specifier: ^5.0.1
         version: 5.0.1(react-hook-form@7.56.1(react@19.1.0))
-      '@phosphor-icons/react':
-        specifier: ^2.0.10
-        version: 2.1.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       '@radix-ui/react-accordion':
         specifier: ^1.2.8
         version: 1.2.8(@types/react-dom@18.2.6)(@types/react@18.2.14)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -152,9 +149,6 @@ importers:
       framer-motion:
         specifier: ^12.9.2
         version: 12.9.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
-      hast:
-        specifier: ^1.0.0
-        version: 1.0.0
       input-otp:
         specifier: ^1.4.2
         version: 1.4.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -627,13 +621,6 @@ packages:
   '@opentelemetry/api@1.9.0':
     resolution: {integrity: sha512-3giAOQvZiH5F9bMlMiv8+GSPMeqg0dbaeo58/0SlA9sxSqZhnUtxzX9/2FzyhS9sWQf5S0GJE0AKBrFqjpeYcg==}
     engines: {node: '>=8.0.0'}
-
-  '@phosphor-icons/react@2.1.7':
-    resolution: {integrity: sha512-g2e2eVAn1XG2a+LI09QU3IORLhnFNAFkNbo2iwbX6NOKSLOwvEMmTa7CgOzEbgNWR47z8i8kwjdvYZ5fkGx1mQ==}
-    engines: {node: '>=10'}
-    peerDependencies:
-      react: '>= 16.8'
-      react-dom: '>= 16.8'
 
   '@pkgjs/parseargs@0.11.0':
     resolution: {integrity: sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==}
@@ -2527,10 +2514,6 @@ packages:
   hast-util-whitespace@2.0.1:
     resolution: {integrity: sha512-nAxA0v8+vXSBDt3AnRUNjyRIQ0rD+ntpbAp4LnPkumc5M9yUbSMa4XDU9Q6etY4f1Wp4bNgvc1yjiZtsTTrSng==}
 
-  hast@1.0.0:
-    resolution: {integrity: sha512-vFUqlRV5C+xqP76Wwq2SrM0kipnmpxJm7OfvVXpB35Fp+Fn4MV+ozr+JZr5qFvyR1q/U+Foim2x+3P+x9S1PLA==}
-    deprecated: Renamed to rehype
-
   hastscript@6.0.0:
     resolution: {integrity: sha512-nDM6bvd7lIqDUiYEiu5Sl/+6ReP0BMk/2f4U/Rooccxkj0P5nm+acM5PrGJ/t5I8qPGiqZSE6hVAwZEdZIvP4w==}
 
@@ -4390,11 +4373,6 @@ snapshots:
   '@one-ini/wasm@0.1.1': {}
 
   '@opentelemetry/api@1.9.0': {}
-
-  '@phosphor-icons/react@2.1.7(react-dom@19.1.0(react@19.1.0))(react@19.1.0)':
-    dependencies:
-      react: 19.1.0
-      react-dom: 19.1.0(react@19.1.0)
 
   '@pkgjs/parseargs@0.11.0':
     optional: true
@@ -6521,8 +6499,6 @@ snapshots:
       unist-util-find-after: 4.0.1
 
   hast-util-whitespace@2.0.1: {}
-
-  hast@1.0.0: {}
 
   hastscript@6.0.0:
     dependencies:
