@@ -1,6 +1,7 @@
 export const EmptyMessage = () => {
     return (
-        <div className="max-w-2xl my-auto mx-auto w-full  p-4 lg:p-8 rounded-lg ">
+        <div
+            className="max-w-2xl mx-auto h-screen flex items-center justify-center w-full p-4 lg:p-8 rounded-lg ">
             <div className="space-y-4">
                 <h2 className="text-2xl font-bold">How to Use the Chat Bot</h2>
                 <div className="space-y-2">

@@ -11,7 +11,11 @@ interface ChatSelectorProps {
 export function ChatSelector(props: ChatSelectorProps) {
     const {chats} = useLocalChat(props.id)
 
-    return <div className={"absolute w-[200px] p-2 flex flex-col gap-2"}>
+    return <div className={"absolute w-[200px] h-full p-2 flex flex-col gap-2"}>
+        <Link href={"/"}>
+            New Chat
+        </Link>
+
         <span>History</span>
 
         {chats.map((chat, index) => {

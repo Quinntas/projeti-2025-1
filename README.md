@@ -5,7 +5,7 @@
 - [ ] Support image/audio generation
 - [X] Break down [use-markdown-processor](src/hooks/use-markdown-processor.tsx) into smaller pieces
 - [X] Save chats in localStorage
-- [ ] Chat history UI/UX
+- [X] Chat history UI/UX
 - [ ] Step-by-step chat feedback (reasoning, tool calling, status, etc.)
 - [ ] Better [empty-message](src/components/empty-message.tsx) copy
 - [x] Reduce bundle size

@@ -1,8 +1,13 @@
-import {ChatSelector} from "@/components/chat-selector";
+import {AppSidebar} from "@/components/app-sidebar";
+import {SidebarInset, SidebarProvider} from "@/components/ui/sidebar";
 
 export default function MainLayout({children}: { children: React.ReactNode }) {
-    return <div className={"flex"}>
-        <ChatSelector id={""}/>
-        {children}
-    </div>
+
+    return <SidebarProvider>
+        <AppSidebar/>
+
+        <SidebarInset>
+            {children}
+        </SidebarInset>
+    </SidebarProvider>
 }
