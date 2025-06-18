@@ -5,7 +5,6 @@ import * as React from "react"
 import {
     Sidebar,
     SidebarContent,
-    SidebarFooter,
     SidebarGroup,
     SidebarGroupContent,
     SidebarGroupLabel,
@@ -65,9 +64,6 @@ export function AppSidebar({...props}: React.ComponentProps<typeof Sidebar>) {
                     ))}
                 </SidebarGroup>
             </SidebarContent>
-            <SidebarFooter>
-                asd
-            </SidebarFooter>
             <SidebarRail/>
         </Sidebar>
     )

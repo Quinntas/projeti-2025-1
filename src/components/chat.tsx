@@ -60,6 +60,8 @@ export function Chat(props: ChatProps) {
         }
     });
 
+    if (error) console.error(error);
+
     useEffect(() => {
         replaceMessages(props.id, messages)
     }, [messages.length]);

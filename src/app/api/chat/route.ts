@@ -71,20 +71,25 @@ y=x^{2}
 
 
 export async function POST(req: Request) {
-    const {messages, token, model, isSearchActive} = await req.json();
-    return streamText({
-        model: createOpenAI({
-            apiKey: token
-        })(model, {
-            reasoningEffort: "medium",
-        }),
-        system: SYSTEM_PROMPT,
-        maxSteps: 5,
-        messages,
-        toolChoice: 'auto',
-        temperature: 0.3,
-        tools: {
-            ...createAISDKTools(calculator)
-        },
-    }).toDataStreamResponse()
+    try {
+        const {messages, token, model, isSearchActive} = await req.json();
+        return streamText({
+            model: createOpenAI({
+                apiKey: token
+            })(model, {
+                reasoningEffort: "medium",
+            }),
+            system: SYSTEM_PROMPT,
+            maxSteps: 5,
+            messages,
+            toolChoice: 'auto',
+            temperature: 0.3,
+            tools: {
+                ...createAISDKTools(calculator)
+            },
+        }).toDataStreamResponse()
+    } catch (e) {
+        console.error(e)
+        throw e
+    }
 }
